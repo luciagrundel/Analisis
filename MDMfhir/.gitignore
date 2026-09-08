@@ -1,0 +1,5 @@
+portal/node_modules/
+portal/dist/
+postgres-data/
+.idea/
+.vscode/

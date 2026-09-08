@@ -1,0 +1,45 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: hapi
+      POSTGRES_USER: hapi
+      POSTGRES_PASSWORD: hapi
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hapi -d hapi"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  fhir:
+    image: hapiproject/hapi:v8.10.0-3
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_CONFIG_ADDITIONAL_LOCATION: optional:file:/app/config/
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./hapi-fhir:/app/config:ro
+      - ./hapi-fhir/mdm-rules.json:/app/extra-classes/mpi-mdm-rules.json:ro
+
+  portal:
+    image: node:22-alpine
+    working_dir: /app
+    depends_on:
+      - fhir
+    environment:
+      VITE_FHIR_BASE_URL: http://localhost:8080/fhir
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./portal:/app
+      - portal-node-modules:/app/node_modules
+
+volumes:
+  postgres-data:
+  portal-node-modules:

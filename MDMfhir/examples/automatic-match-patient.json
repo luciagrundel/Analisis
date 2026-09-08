@@ -1,0 +1,8 @@
+{
+  "resourceType": "Patient",
+  "meta": { "profile": ["https://digital.msp.gob.do/fhir/conectaton/StructureDefinition/PatientDO"] },
+  "identifier": [{ "system": "https://mpi.demo.local/cedula", "value": "001-1234567-8" }],
+  "name": [{ "given": ["María", "José"], "family": "De La Cruz", "extension": [{ "url": "https://digital.msp.gob.do/fhir/conectaton/StructureDefinition/SegundoApellidoDO", "valueString": "Gómez" }] }],
+  "birthDate": "1990-05-12",
+  "gender": "female"
+}

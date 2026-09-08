@@ -1,0 +1,29 @@
+{
+  "version": "1",
+  "mdmTypes": ["Patient"],
+  "candidateSearchParams": [
+    { "resourceType": "Patient", "searchParams": ["identifier"] },
+    { "resourceType": "Patient", "searchParams": ["birthdate"] },
+    { "resourceType": "Patient", "searchParams": ["family"] }
+  ],
+  "candidateFilterSearchParams": [],
+  "matchFields": [
+    { "name": "identifier", "resourceType": "Patient", "fhirPath": "identifier.where(system = 'https://mpi.demo.local/cedula').value", "matcher": { "algorithm": "STRING", "exact": false } },
+    { "name": "given-name", "resourceType": "Patient", "resourcePath": "name.given", "matcher": { "algorithm": "STRING", "exact": false } },
+    { "name": "family-name", "resourceType": "Patient", "resourcePath": "name.family", "matcher": { "algorithm": "STRING", "exact": false } },
+    { "name": "second-surname", "resourceType": "Patient", "fhirPath": "name.extension.where(url = 'https://digital.msp.gob.do/fhir/conectaton/StructureDefinition/SegundoApellidoDO').value", "matcher": { "algorithm": "STRING", "exact": false } },
+    { "name": "birth-date", "resourceType": "Patient", "resourcePath": "birthDate", "matcher": { "algorithm": "STRING" } },
+    { "name": "gender", "resourceType": "Patient", "resourcePath": "gender", "matcher": { "algorithm": "STRING" } }
+  ],
+  "matchResultMap": {
+    "identifier,given-name,family-name,birth-date,gender": "MATCH",
+    "identifier,given-name,family-name,second-surname,birth-date,gender": "MATCH",
+    "given-name,family-name,birth-date": "POSSIBLE_MATCH",
+    "given-name,family-name,gender": "POSSIBLE_MATCH",
+    "given-name,family-name,birth-date,gender": "POSSIBLE_MATCH",
+    "identifier,given-name,family-name": "POSSIBLE_MATCH",
+    "identifier,birth-date": "POSSIBLE_MATCH",
+    "identifier,gender": "POSSIBLE_MATCH",
+    "identifier,birth-date,gender": "POSSIBLE_MATCH"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "resourceType": "Patient",
+  "meta": { "profile": ["https://digital.msp.gob.do/fhir/conectaton/StructureDefinition/PatientDO"] },
+  "identifier": [{ "system": "https://mpi.demo.local/cedula", "value": "402-9988776-1" }],
+  "name": [{ "given": ["Luis"], "family": "Ramírez", "extension": [{ "url": "https://digital.msp.gob.do/fhir/conectaton/StructureDefinition/SegundoApellidoDO", "valueString": "Núñez" }] }],
+  "birthDate": "1982-11-03",
+  "gender": "male"
+}
