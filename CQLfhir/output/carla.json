@@ -1,0 +1,56 @@
+﻿{
+    "resourceType":  "Parameters",
+    "parameter":  [
+                      {
+                          "name":  "AdultoConObservaciones",
+                          "valueBoolean":  false
+                      },
+                      {
+                          "name":  "CantidadObservacionesFinales",
+                          "valueInteger":  0
+                      },
+                      {
+                          "name":  "Edad",
+                          "valueInteger":  40
+                      },
+                      {
+                          "name":  "EsAdulto",
+                          "valueBoolean":  true
+                      },
+                      {
+                          "name":  "ObservacionesFinales",
+                          "_valueBoolean":  {
+                                                "extension":  [
+                                                                  {
+                                                                      "url":  "http://hl7.org/fhir/StructureDefinition/cqf-isEmptyList",
+                                                                      "valueBoolean":  true
+                                                                  }
+                                                              ]
+                                            }
+                      },
+                      {
+                          "name":  "Patient",
+                          "resource":  {
+                                           "resourceType":  "Patient",
+                                           "id":  "carla",
+                                           "meta":  {
+                                                        "versionId":  "1",
+                                                        "lastUpdated":  "2026-09-21T19:14:21.476Z"
+                                                    },
+                                           "name":  [
+                                                        {
+                                                            "family":  "Ejemplo",
+                                                            "given":  [
+                                                                          "Carla"
+                                                                      ]
+                                                        }
+                                                    ],
+                                           "birthDate":  "1985-05-20"
+                                       }
+                      },
+                      {
+                          "name":  "TieneObservacionesFinales",
+                          "valueBoolean":  false
+                      }
+                  ]
+}

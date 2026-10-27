@@ -1,0 +1,49 @@
+﻿{
+    "resourceType": "CarePlan",
+    "id": "plan-seguimiento",
+    "contained": [
+        {
+            "resourceType": "RequestGroup",
+            "id": "plan-seguimiento",
+            "instantiatesCanonical": [
+                "http://example.org/fhir/PlanDefinition/PlanSeguimiento|1.0.0"
+            ],
+            "status": "active",
+            "intent": "proposal",
+            "subject": {
+                "reference": "Patient/ana"
+            },
+            "action": [
+                {
+                    "id": "revisar-observaciones",
+                    "title": "Revisar las observaciones finales",
+                    "description": "Revision de ejemplo para un adulto con observaciones finales.",
+                    "condition": [
+                        {
+                            "kind": "applicability",
+                            "expression": {
+                                "language": "text/cql-identifier",
+                                "expression": "RequiereSeguimiento"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "instantiatesCanonical": [
+        "http://example.org/fhir/PlanDefinition/PlanSeguimiento|1.0.0"
+    ],
+    "status": "active",
+    "intent": "proposal",
+    "subject": {
+        "reference": "Patient/ana"
+    },
+    "activity": [
+        {
+            "reference": {
+                "reference": "#plan-seguimiento"
+            }
+        }
+    ]
+}

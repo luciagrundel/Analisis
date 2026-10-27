@@ -1,0 +1,33 @@
+﻿{
+    "resourceType":  "CarePlan",
+    "id":  "plan-seguimiento",
+    "contained":  [
+                      {
+                          "resourceType":  "RequestGroup",
+                          "id":  "plan-seguimiento",
+                          "instantiatesCanonical":  [
+                                                        "http://example.org/fhir/PlanDefinition/PlanSeguimiento|1.0.0"
+                                                    ],
+                          "status":  "active",
+                          "intent":  "proposal",
+                          "subject":  {
+                                          "reference":  "Patient/bruno"
+                                      }
+                      }
+                  ],
+    "instantiatesCanonical":  [
+                                  "http://example.org/fhir/PlanDefinition/PlanSeguimiento|1.0.0"
+                              ],
+    "status":  "active",
+    "intent":  "proposal",
+    "subject":  {
+                    "reference":  "Patient/bruno"
+                },
+    "activity":  [
+                     {
+                         "reference":  {
+                                           "reference":  "#plan-seguimiento"
+                                       }
+                     }
+                 ]
+}
