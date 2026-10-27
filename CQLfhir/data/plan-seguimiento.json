@@ -1,0 +1,28 @@
+{
+  "resourceType": "PlanDefinition",
+  "id": "plan-seguimiento",
+  "url": "http://example.org/fhir/PlanDefinition/PlanSeguimiento",
+  "version": "1.0.0",
+  "name": "PlanSeguimiento",
+  "title": "Seguimiento de ejemplo",
+  "status": "active",
+  "experimental": true,
+  "description": "Ejemplo didactico con pacientes ficticios; no es una recomendacion clinica.",
+  "library": ["http://example.org/fhir/Library/PlanSeguimiento|1.0.0"],
+  "action": [
+    {
+      "id": "revisar-observaciones",
+      "title": "Revisar las observaciones finales",
+      "description": "Revision de ejemplo para un adulto con observaciones finales.",
+      "condition": [
+        {
+          "kind": "applicability",
+          "expression": {
+            "language": "text/cql-identifier",
+            "expression": "RequiereSeguimiento"
+          }
+        }
+      ]
+    }
+  ]
+}

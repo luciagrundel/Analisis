@@ -1,0 +1,34 @@
+@baseUrl = http://localhost:8080/fhir
+
+### Capacidades del servidor
+GET {{baseUrl}}/metadata
+Accept: application/fhir+json
+
+### Datos que consulta el motor para Ana
+GET {{baseUrl}}/Observation?subject=Patient/ana
+Accept: application/fhir+json
+
+### CQL almacenado (content.data contiene el texto en Base64)
+GET {{baseUrl}}/Library/reglas-basicas
+Accept: application/fhir+json
+
+### Evaluar todas las expresiones para Ana
+POST {{baseUrl}}/Library/reglas-basicas/$evaluate
+Content-Type: application/fhir+json
+Accept: application/fhir+json
+
+{"resourceType":"Parameters","parameter":[{"name":"subject","valueString":"Patient/ana"}]}
+
+### Bruno es menor aunque tiene una observacion final
+POST {{baseUrl}}/Library/reglas-basicas/$evaluate
+Content-Type: application/fhir+json
+Accept: application/fhir+json
+
+{"resourceType":"Parameters","parameter":[{"name":"subject","valueString":"Patient/bruno"}]}
+
+### Carla es adulta pero su observacion es preliminar
+POST {{baseUrl}}/Library/reglas-basicas/$evaluate
+Content-Type: application/fhir+json
+Accept: application/fhir+json
+
+{"resourceType":"Parameters","parameter":[{"name":"subject","valueString":"Patient/carla"}]}

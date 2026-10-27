@@ -1,0 +1,11 @@
+name: cql-aprendizaje
+services:
+  hapi:
+    image: hapiproject/hapi:v8.12.0-1
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      SPRING_CONFIG_ADDITIONAL_LOCATION: file:/config/application.yaml
+      JAVA_TOOL_OPTIONS: -Xms512m -Xmx2g
+    volumes:
+      - ./config/application.yaml:/config/application.yaml:ro

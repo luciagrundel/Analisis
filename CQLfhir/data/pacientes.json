@@ -1,0 +1,12 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+    {"resource": {"resourceType": "Patient", "id": "ana", "name": [{"given": ["Ana"], "family": "Ejemplo"}], "birthDate": "1990-01-01"}, "request": {"method": "PUT", "url": "Patient/ana"}},
+    {"resource": {"resourceType": "Patient", "id": "bruno", "name": [{"given": ["Bruno"], "family": "Ejemplo"}], "birthDate": "2010-06-15"}, "request": {"method": "PUT", "url": "Patient/bruno"}},
+    {"resource": {"resourceType": "Patient", "id": "carla", "name": [{"given": ["Carla"], "family": "Ejemplo"}], "birthDate": "1985-05-20"}, "request": {"method": "PUT", "url": "Patient/carla"}},
+    {"resource": {"resourceType": "Observation", "id": "ana-final", "status": "final", "code": {"coding": [{"system": "http://loinc.org", "code": "29463-7", "display": "Body weight"}]}, "subject": {"reference": "Patient/ana"}, "effectiveDateTime": "2025-12-01", "valueQuantity": {"value": 65, "unit": "kg", "system": "http://unitsofmeasure.org", "code": "kg"}}, "request": {"method": "PUT", "url": "Observation/ana-final"}},
+    {"resource": {"resourceType": "Observation", "id": "bruno-final", "status": "final", "code": {"coding": [{"system": "http://loinc.org", "code": "29463-7", "display": "Body weight"}]}, "subject": {"reference": "Patient/bruno"}, "effectiveDateTime": "2025-12-01", "valueQuantity": {"value": 52, "unit": "kg", "system": "http://unitsofmeasure.org", "code": "kg"}}, "request": {"method": "PUT", "url": "Observation/bruno-final"}},
+    {"resource": {"resourceType": "Observation", "id": "carla-preliminar", "status": "preliminary", "code": {"coding": [{"system": "http://loinc.org", "code": "29463-7", "display": "Body weight"}]}, "subject": {"reference": "Patient/carla"}, "effectiveDateTime": "2025-12-01", "valueQuantity": {"value": 70, "unit": "kg", "system": "http://unitsofmeasure.org", "code": "kg"}}, "request": {"method": "PUT", "url": "Observation/carla-preliminar"}}
+  ]
+}
