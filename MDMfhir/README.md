@@ -1,5 +1,6 @@
 # Demo MPI con HAPI FHIR MDM
 
+
 Proyecto local de demostración de un Master Patient Index (MPI) sobre FHIR R4. Incluye HAPI FHIR JPA Starter con MDM, PostgreSQL y un portal React/TypeScript que consume directamente el API FHIR.
 
 ## Qué incluye

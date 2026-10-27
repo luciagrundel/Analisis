@@ -1,3 +1,4 @@
+
 # Aprender CQL dentro de HAPI FHIR
 
 Laboratorio local con Docker, HAPI FHIR `v8.12.0-1`, FHIR R4 y pacientes ficticios. El objetivo es leer una regla, ejecutarla sobre un paciente y entender su resultado. Las reglas son didacticas, no recomendaciones clinicas.
