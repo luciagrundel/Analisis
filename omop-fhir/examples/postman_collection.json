@@ -1,0 +1,16 @@
+{
+  "info": {
+    "name": "Laboratorio HAPI FHIR - OMOP",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Ejecutar primero docker compose run --rm etl demo. Datos sinteticos. La transformacion OMOP se ejecuta con la ETL, no con estas consultas."
+  },
+  "variable": [{"key": "baseUrl", "value": "http://localhost:8080/fhir"}],
+  "item": [
+    {"name": "Capacidades R4", "request": {"method": "GET", "header": [{"key": "Accept", "value": "application/fhir+json"}], "url": "{{baseUrl}}/metadata"}},
+    {"name": "Pacientes", "request": {"method": "GET", "url": "{{baseUrl}}/Patient?_count=10"}},
+    {"name": "Paciente p5", "request": {"method": "GET", "url": "{{baseUrl}}/Patient/p5"}},
+    {"name": "Encuentros p5", "request": {"method": "GET", "url": "{{baseUrl}}/Encounter?subject=Patient/p5"}},
+    {"name": "Diagnosticos p5", "request": {"method": "GET", "url": "{{baseUrl}}/Condition?subject=Patient/p5"}},
+    {"name": "Glucosa p5", "request": {"method": "GET", "url": "{{baseUrl}}/Observation?subject=Patient/p5&code=http%3A%2F%2Floinc.org%7C2345-7"}}
+  ]
+}

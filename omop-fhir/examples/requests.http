@@ -1,0 +1,28 @@
+@base = http://localhost:8080/fhir
+
+### Capacidades y version del servidor
+GET {{base}}/metadata
+Accept: application/fhir+json
+
+### Pacientes sinteticos
+GET {{base}}/Patient?_count=10
+Accept: application/fhir+json
+
+### Paciente individual
+GET {{base}}/Patient/p5
+Accept: application/fhir+json
+
+### Diagnosticos del paciente
+GET {{base}}/Condition?subject=Patient/p5
+Accept: application/fhir+json
+
+### Glucosa del paciente
+GET {{base}}/Observation?subject=Patient/p5&code=http://loinc.org|2345-7
+Accept: application/fhir+json
+
+### Carga idempotente: cuerpo desde archivo, compatible con REST Client de VS Code
+POST {{base}}
+Content-Type: application/fhir+json
+Accept: application/fhir+json
+
+< ./transaction.json

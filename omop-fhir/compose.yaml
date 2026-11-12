@@ -1,0 +1,169 @@
+name: omop-fhir-lab
+services:
+  fhir-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: hapi
+      POSTGRES_USER: hapi
+      POSTGRES_PASSWORD: ${FHIR_DB_PASSWORD:-hapi_local_demo}
+    volumes:
+      - fhir-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U hapi -d hapi]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+  hapi:
+    image: ${HAPI_IMAGE:-hapiproject/hapi@sha256:0ff86aac4c7bd13a1ee226444a70263bb46ed1c28ef543c30a44f865b80ca04e}
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://fhir-db:5432/hapi
+      SPRING_DATASOURCE_USERNAME: hapi
+      SPRING_DATASOURCE_PASSWORD: ${FHIR_DB_PASSWORD:-hapi_local_demo}
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: ca.uhn.fhir.jpa.model.dialect.HapiFhirPostgresDialect
+      SPRING_JPA_PROPERTIES_HIBERNATE_SEARCH_ENABLED: "false"
+      HAPI_FHIR_FHIR_VERSION: R4
+      JAVA_TOOL_OPTIONS: -Xms512m -Xmx1536m
+    depends_on:
+      fhir-db:
+        condition: service_healthy
+  omop-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: omop
+      POSTGRES_USER: omop
+      POSTGRES_PASSWORD: ${OMOP_DB_PASSWORD:-omop_local_demo}
+    volumes:
+      - omop-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U omop -d omop]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+  etl:
+    build: .
+    profiles: [tools]
+    environment:
+      FHIR_URL: http://hapi:8080/fhir
+      PGHOST: omop-db
+      PGDATABASE: omop
+      PGUSER: omop
+      PGPASSWORD: ${OMOP_DB_PASSWORD:-omop_local_demo}
+    depends_on:
+      hapi:
+        condition: service_started
+      omop-db:
+        condition: service_healthy
+  webapi-db:
+    image: postgres:16-alpine
+    profiles: [atlas]
+    environment:
+      POSTGRES_DB: webapi
+      POSTGRES_USER: webapi
+      POSTGRES_PASSWORD: ${WEBAPI_DB_PASSWORD:-webapi_local_demo}
+    volumes:
+      - atlas-config-data:/var/lib/postgresql/data
+      - ./atlas/init-webapi.sql:/docker-entrypoint-initdb.d/10-schema.sql:ro
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U webapi -d webapi]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+  webapi:
+    image: ${WEBAPI_IMAGE:-ohdsi/webapi:2.15.2}
+    profiles: [atlas]
+    environment:
+      DATASOURCE_DRIVERCLASSNAME: org.postgresql.Driver
+      DATASOURCE_URL: jdbc:postgresql://webapi-db:5432/webapi
+      DATASOURCE_USERNAME: webapi
+      DATASOURCE_PASSWORD: ${WEBAPI_DB_PASSWORD:-webapi_local_demo}
+      DATASOURCE_OHDSI_SCHEMA: webapi
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+      SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA: webapi
+      SPRING_BATCH_REPOSITORY_TABLEPREFIX: webapi.BATCH_
+      FLYWAY_DATASOURCE_DRIVERCLASSNAME: org.postgresql.Driver
+      FLYWAY_DATASOURCE_URL: jdbc:postgresql://webapi-db:5432/webapi
+      FLYWAY_DATASOURCE_USERNAME: webapi
+      FLYWAY_DATASOURCE_PASSWORD: ${WEBAPI_DB_PASSWORD:-webapi_local_demo}
+      FLYWAY_LOCATIONS: classpath:db/migration/postgresql
+      FLYWAY_PLACEHOLDERS_OHDSISCHEMA: webapi
+      FLYWAY_SCHEMAS: webapi
+      SECURITY_PROVIDER: DisabledSecurity
+      JAVA_OPTS: -Xms256m -Xmx1536m
+    depends_on:
+      webapi-db:
+        condition: service_healthy
+      omop-db:
+        condition: service_healthy
+  atlas:
+    image: ${ATLAS_IMAGE:-ohdsi/atlas@sha256:6814e8c5b5366b50bc197b1eb2881689e5852784742b91b9636eec514f5a555e}
+    profiles: [atlas]
+    ports:
+      - "127.0.0.1:8091:8080"
+    environment:
+      USE_DYNAMIC_WEBAPI_URL: "false"
+      WEBAPI_URL: http://localhost:8091/WebAPI/
+      ATLAS_INSTANCE_NAME: FHIR OMOP - laboratorio sintetico
+      ATLAS_USER_AUTH_ENABLED: "false"
+      ATLAS_ENABLE_TANDCS: "false"
+    volumes:
+      - ./atlas/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      webapi:
+        condition: service_started
+  atlas-init:
+    build: .
+    profiles: [atlas]
+    entrypoint: [python, /atlas/configure.py]
+    environment:
+      WEBAPI_DB_PASSWORD: ${WEBAPI_DB_PASSWORD:-webapi_local_demo}
+      OMOP_DB_PASSWORD: ${OMOP_DB_PASSWORD:-omop_local_demo}
+    volumes:
+      - ./atlas:/atlas:ro
+      - ./output/atlas:/output
+    depends_on:
+      webapi:
+        condition: service_started
+  quality-prepare:
+    build: .
+    profiles: [quality]
+    entrypoint: [python, /quality/prepare.py]
+    environment:
+      PGHOST: omop-db
+      PGDATABASE: omop
+      PGUSER: omop
+      PGPASSWORD: ${OMOP_DB_PASSWORD:-omop_local_demo}
+    volumes:
+      - ./quality:/quality:ro
+    depends_on:
+      omop-db:
+        condition: service_healthy
+  dqd-dashboard:
+    image: ohdsi/broadsea-hades:1.19.0
+    profiles: [quality]
+    entrypoint: [Rscript, /quality/view.R]
+    ports:
+      - "127.0.0.1:8090:3838"
+    volumes:
+      - ./quality:/quality:ro
+      - ./output/quality:/output:ro
+  quality:
+    image: ohdsi/broadsea-hades:1.19.0
+    profiles: [quality]
+    entrypoint: [Rscript, /quality/run.R]
+    command: [all]
+    environment:
+      PGPASSWORD: ${OMOP_DB_PASSWORD:-omop_local_demo}
+      JAVA_TOOL_OPTIONS: -Xmx2g
+    volumes:
+      - ./quality:/quality:ro
+      - ./output/quality:/output
+    depends_on:
+      omop-db:
+        condition: service_healthy
+volumes:
+  fhir-data:
+  omop-data:
+  atlas-config-data:
